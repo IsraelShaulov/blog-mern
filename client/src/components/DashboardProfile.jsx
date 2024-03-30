@@ -10,9 +10,12 @@ import {
   deleteUserStart,
   deleteUserFailure,
   deleteUserSuccess,
+  logoutUserSuccess,
+  logoutUserStart,
 } from '../redux/user/userSlice';
 import toast from 'react-hot-toast';
 import { HiOutlineExclamationCircle } from 'react-icons/hi';
+import { useNavigate } from 'react-router-dom';
 
 const DashboardProfile = () => {
   const { currentUser } = useSelector((state) => state.user);
@@ -21,6 +24,7 @@ const DashboardProfile = () => {
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({});
   const [showModal, setShowModal] = useState(false);
+  const navigate = useNavigate();
 
   const uploadImageHandler = async (e) => {
     console.log('File selected');
@@ -115,6 +119,19 @@ const DashboardProfile = () => {
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      dispatch(logoutUserStart());
+      const response = await axios.post(`/api/v1/users/profile/logout`);
+      dispatch(logoutUserSuccess(response.data));
+      navigate('/login');
+      toast.success('Logging Out...');
+    } catch (error) {
+      dispatch(logoutUserFailure(error.response.data.message));
+      toast.error(error.response.data.message);
+    }
+  };
+
   return (
     <div className='max-w-lg mx-auto p-3 w-full'>
       <h1 className='my-7 text-center font-semibold text-3xl'>Profile</h1>
@@ -164,7 +181,9 @@ const DashboardProfile = () => {
         <span onClick={() => setShowModal(true)} className='cursor-pointer'>
           Delete Account
         </span>
-        <span className='cursor-pointer'>Logout</span>
+        <span onClick={handleLogout} className='cursor-pointer'>
+          Logout
+        </span>
       </div>
 
       <Modal

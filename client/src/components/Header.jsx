@@ -11,12 +11,34 @@ import { AiOutlineSearch } from 'react-icons/ai';
 import { FaMoon, FaSun } from 'react-icons/fa';
 import { useSelector, useDispatch } from 'react-redux';
 import { toggleTheme } from '../redux/theme/themeSlice';
+import {
+  logoutUserFailure,
+  logoutUserStart,
+  logoutUserSuccess,
+} from '../redux/user/userSlice';
+import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const Header = () => {
   const path = useLocation().pathname;
   const dispatch = useDispatch();
   const { currentUser, loading } = useSelector((state) => state.user);
   const { theme } = useSelector((state) => state.theme);
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      dispatch(logoutUserStart());
+      const response = await axios.post(`/api/v1/users/profile/logout`);
+      dispatch(logoutUserSuccess(response.data));
+      navigate('/login');
+      toast.success('Logging Out...');
+    } catch (error) {
+      dispatch(logoutUserFailure(error.response.data.message));
+      toast.error(error.response.data.message);
+    }
+  };
 
   return (
     <Navbar className='border-b-2'>
@@ -75,7 +97,7 @@ const Header = () => {
               <Dropdown.Item>Profile</Dropdown.Item>
             </Link>
             <Dropdown.Divider />
-            <Dropdown.Item>Logout</Dropdown.Item>
+            <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
           </Dropdown>
         ) : (
           <Link to='/login'>

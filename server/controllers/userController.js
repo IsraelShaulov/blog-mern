@@ -84,3 +84,11 @@ export const deleteUserProfile = async (req, res, next) => {
 
   res.status(200).json({ message: 'User deleted successfully' });
 };
+
+export const logoutUser = async (req, res, next) => {
+  res.cookie('token', 'logout', {
+    httpOnly: true,
+    expires: new Date(Date.now()),
+  });
+  res.status(200).json({ msg: 'user logged out successfully' });
+};
