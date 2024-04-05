@@ -15,7 +15,7 @@ export const getUserProfile = async (req, res, next) => {
     username: userProfile.username,
     email: userProfile.email,
     profilePicture: userProfile.profilePicture,
-    // isAdmin: userProfile.isAdmin,
+    isAdmin: userProfile.isAdmin,
   });
 };
 

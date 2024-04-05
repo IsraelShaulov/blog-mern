@@ -1,4 +1,4 @@
-import { Button, Modal, ModalBody, TextInput } from 'flowbite-react';
+import { Button, Modal, ModalBody, TextInput, Spinner } from 'flowbite-react';
 import { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
@@ -15,10 +15,10 @@ import {
 } from '../redux/user/userSlice';
 import toast from 'react-hot-toast';
 import { HiOutlineExclamationCircle } from 'react-icons/hi';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const DashboardProfile = () => {
-  const { currentUser } = useSelector((state) => state.user);
+  const { currentUser, loading } = useSelector((state) => state.user);
   const [imageFileUrl, setImageFileUrl] = useState('');
   const filePickerRef = useRef();
   const dispatch = useDispatch();
@@ -173,9 +173,25 @@ const DashboardProfile = () => {
           placeholder='password'
           onChange={handleChange}
         />
-        <Button type='submit' gradientDuoTone='purpleToBlue' outline>
+        <Button
+          disabled={loading}
+          type='submit'
+          gradientDuoTone='purpleToBlue'
+          outline
+        >
           Update
         </Button>
+        {currentUser?.isAdmin && (
+          <Link to='/create-post'>
+            <Button
+              type='button'
+              gradientDuoTone='purpleToPink'
+              className='w-full'
+            >
+              Create a post
+            </Button>
+          </Link>
+        )}
       </form>
       <div className='text-red-500 flex justify-between mt-5'>
         <span onClick={() => setShowModal(true)} className='cursor-pointer'>
