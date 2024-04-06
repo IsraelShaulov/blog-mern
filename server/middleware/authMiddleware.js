@@ -25,6 +25,6 @@ export const adminMiddleware = (req, res, next) => {
   if (req.user && req.user.isAdmin) {
     next();
   } else {
-    return next(errorHandler(401, 'Not authorized as admin'));
+    return next(errorHandler(403, 'Not authorized as admin'));
   }
 };

@@ -11,6 +11,7 @@ import cookieParser from 'cookie-parser';
 import authRouter from './routes/authRouter.js';
 import userRouter from './routes/userRouter.js';
 import uploadRouter from './routes/uploadRouter.js';
+import postRouter from './routes/postRouter.js';
 
 // middleware
 import errorHandlerMiddleware from './middleware/errorHandlerMiddleware.js';
@@ -28,6 +29,7 @@ app.get('/', (req, res) => {
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/upload', uploadRouter);
+app.use('/api/v1/post', postRouter);
 
 const __dirname = path.resolve();
 console.log(__dirname);
