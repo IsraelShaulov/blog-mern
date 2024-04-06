@@ -6,6 +6,16 @@ export const createPost = async (req, res, next) => {
     return next(errorHandler(400, 'Please provide all required fields'));
   }
 
+  const titlePostAlreadyExists = await Post.findOne({ title: req.body.title });
+  if (titlePostAlreadyExists) {
+    return next(
+      errorHandler(
+        400,
+        'This title post already exists, please write something else'
+      )
+    );
+  }
+
   const slug = req.body.title
     .split(' ')
     .join('-')

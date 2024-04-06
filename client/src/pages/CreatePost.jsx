@@ -63,14 +63,9 @@ const CreatePost = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      setPublishError(null);
       const response = await axios.post('/api/v1/post/create-post', formData);
-
-      if (response.status === 200) {
-        setPublishError(null);
-        navigate(`/post/${response.data.slug}`);
-      } else {
-        setPublishError(response.data.message);
-      }
+      navigate(`/post/${response.data.slug}`);
     } catch (error) {
       setPublishError(error.response?.data?.message || 'Something went wrong');
     }
