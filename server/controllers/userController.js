@@ -72,6 +72,9 @@ export const updateUserProfile = async (req, res, next) => {
   res.status(200).json(updatedUser);
 };
 
+// @desc delete user profile
+// @route DELETE /api/v1/users/profile/:userId
+// @access Private
 export const deleteUserProfile = async (req, res, next) => {
   if (req.user._id.toString() !== req.params.userId) {
     return next(errorHandler(403, 'You are not allowed to delete this user!'));
@@ -85,6 +88,9 @@ export const deleteUserProfile = async (req, res, next) => {
   res.status(200).json({ message: 'User deleted successfully' });
 };
 
+// @desc Logout user
+// @route POST /api/v1/users/profile/logout
+// @access Private
 export const logoutUser = async (req, res, next) => {
   res.cookie('token', 'logout', {
     httpOnly: true,
