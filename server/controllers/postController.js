@@ -80,3 +80,15 @@ export const getAllPosts = async (req, res, next) => {
     posts,
   });
 };
+
+// @desc delete single post
+// @route GET /api/v1/post/delete-post
+// @access Admin
+export const deletePost = async (req, res, next) => {
+  if (req.user._id.toString() !== req.params.userId) {
+    return next(errorHandler(403, 'You are not allowed to delete this post'));
+  }
+
+  await Post.findByIdAndDelete(req.params.postId);
+  res.status(200).json('The post has been deleted');
+};
