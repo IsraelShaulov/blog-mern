@@ -82,13 +82,43 @@ export const getAllPosts = async (req, res, next) => {
 };
 
 // @desc delete single post
-// @route GET /api/v1/post/delete-post
+// @route DELETE /api/v1/post/delete-post
 // @access Admin
 export const deletePost = async (req, res, next) => {
   if (req.user._id.toString() !== req.params.userId) {
     return next(errorHandler(403, 'You are not allowed to delete this post'));
   }
 
-  await Post.findByIdAndDelete(req.params.postId);
+  const deletePost = await Post.findByIdAndDelete(req.params.postId);
+  if (!deletePost) {
+    return next(errorHandler(404, 'Not found this post in db'));
+  }
   res.status(200).json('The post has been deleted');
+};
+
+// @desc update single post
+// @route PATCH /api/v1/post/update-post
+// @access Admin
+export const updatePost = async (req, res, next) => {
+  if (req.user._id.toString() !== req.params.userId) {
+    return next(errorHandler(403, 'You are not allowed to update this post'));
+  }
+
+  const updatePost = await Post.findByIdAndUpdate(
+    req.params.postId,
+    {
+      $set: {
+        title: req.body.title,
+        content: req.body.content,
+        category: req.body.category,
+        image: req.body.image,
+      },
+    },
+    { new: true }
+  );
+
+  if (!updatePost) {
+    return next(errorHandler(404, 'Not found this post in db'));
+  }
+  res.status(200).json(updatePost);
 };

@@ -7,6 +7,7 @@ import {
   createPost,
   getAllPosts,
   deletePost,
+  updatePost,
 } from '../controllers/postController.js';
 
 const router = express.Router();
@@ -18,6 +19,12 @@ router.delete(
   authenticateUser,
   adminMiddleware,
   deletePost
+);
+router.patch(
+  '/update-post/:postId/:userId',
+  authenticateUser,
+  adminMiddleware,
+  updatePost
 );
 
 export default router;
