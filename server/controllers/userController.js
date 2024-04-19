@@ -76,7 +76,7 @@ export const updateUserProfile = async (req, res, next) => {
 // @route DELETE /api/v1/users/profile/:userId
 // @access Private
 export const deleteUserProfile = async (req, res, next) => {
-  if (req.user._id.toString() !== req.params.userId) {
+  if (!req.user.isAdmin && req.user._id.toString() !== req.params.userId) {
     return next(errorHandler(403, 'You are not allowed to delete this user!'));
   }
 
