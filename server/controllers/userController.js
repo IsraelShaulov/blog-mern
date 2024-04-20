@@ -151,7 +151,7 @@ export const forgotPassword = async (req, res, next) => {
 
   const message = {
     to: email,
-    from: 'israel125346@gmail.com',
+    from: process.env.MY_EMAIL,
     subject: 'Your Password Reset Code Blog website',
     text: `Your OTP for password reset is: ${otp}. This code will expire in 5 minutes.`,
     // html: '<strong>and easy to do anywhere, even with Node.js</strong>',
