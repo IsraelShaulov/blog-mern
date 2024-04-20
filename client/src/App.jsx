@@ -12,6 +12,9 @@ import AdminRoute from './components/AdminRoute';
 import CreatePost from './pages/CreatePost';
 import UpdatePost from './pages/UpdatePost';
 import PostPage from './pages/PostPage';
+import ForgotPassword from './pages/ForgotPassword';
+import VerifyOTP from './pages/VerifyOTP';
+import ResetPassword from './pages/ResetPassword';
 
 const App = () => {
   return (
@@ -22,6 +25,10 @@ const App = () => {
         <Route path='/about' element={<About />} />
         <Route path='/register' element={<Register />} />
         <Route path='/login' element={<Login />} />
+        <Route path='/forgot-password' element={<ForgotPassword />} />
+        <Route path='/verify' element={<VerifyOTP />} />
+        <Route path='/reset-pass' element={<ResetPassword />} />
+
         <Route element={<PrivateRoute />}>
           <Route path='/dashboard' element={<Dashboard />} />
         </Route>

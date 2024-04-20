@@ -91,12 +91,15 @@ const Login = () => {
             </Button>
             <OAuth />
           </form>
-          <div className='flex gap-2 text-sm mt-5'>
+          <div className='flex gap-2 text-sm mt-5 '>
             <span>Dont Have an account?</span>
             <Link to='/register' className='text-blue-500'>
               Register
             </Link>
           </div>
+          <Link to='/forgot-password' className='text-blue-500 self'>
+            Forgot Password?
+          </Link>
           {errorMessage && (
             <Alert className='mt-5' color='failure'>
               {errorMessage}

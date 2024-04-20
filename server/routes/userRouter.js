@@ -5,6 +5,9 @@ import {
   deleteUserProfile,
   logoutUser,
   getAllUsers,
+  forgotPassword,
+  verifyOtp,
+  resetPassword,
 } from '../controllers/userController.js';
 import {
   adminMiddleware,
@@ -14,6 +17,9 @@ import {
 const router = express.Router();
 
 router.get('/profile', authenticateUser, getUserProfile);
+router.post('/forgot-password', forgotPassword);
+router.post('/verify-otp', verifyOtp);
+router.post('/reset-password', resetPassword);
 router.post('/profile/logout', logoutUser);
 router.get(
   '/profile/get-all-users',

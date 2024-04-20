@@ -1,6 +1,9 @@
 import { errorHandler } from '../errors/error.js';
 import User from '../models/UserModel.js';
+import { attachCookies } from '../utils/attachCookies.js';
 import { hashPassword } from '../utils/passwordUtils.js';
+import sendGridMail from '@sendgrid/mail';
+import { createJWT } from '../utils/tokenUtils.js';
 
 // @desc Get user profile
 // @route GET /api/v1/users/profile
@@ -126,4 +129,86 @@ export const getAllUsers = async (req, res, next) => {
   });
 
   res.status(200).json({ users, totalUsers, lastMonthUsers });
+};
+
+// @desc forgot password
+// @route POST /api/v1/users/forgot-password
+// @access Public
+export const forgotPassword = async (req, res, next) => {
+  sendGridMail.setApiKey(process.env.SENDGRID_API_KEY);
+  const { email } = req.body;
+
+  const user = await User.findOne({ email });
+  if (!user) {
+    return next(errorHandler(400, `Sorry, we couldn't find your account.`));
+  }
+
+  // Generate a 4-digit OTP
+  const otp = Math.floor(1000 + Math.random() * 9000).toString();
+  user.resetPasswordToken = otp;
+  user.resetPasswordExpires = Date.now() + 300000; // OTP expires in 5 minutes
+  await user.save();
+
+  const message = {
+    to: email,
+    from: 'israel125346@gmail.com',
+    subject: 'Your Password Reset Code Blog website',
+    text: `Your OTP for password reset is: ${otp}. This code will expire in 5 minutes.`,
+    // html: '<strong>and easy to do anywhere, even with Node.js</strong>',
+  };
+
+  await sendGridMail.send(message);
+  res.json({ message: 'OTP sent to your email address.' });
+};
+
+// @desc verify otp code
+// @route POST /api/v1/users/verify-otp
+// @access Public
+export const verifyOtp = async (req, res, next) => {
+  const { email, otp } = req.body;
+
+  const user = await User.findOne({
+    email: email,
+    resetPasswordToken: otp,
+    resetPasswordExpires: { $gt: Date.now() },
+  });
+  if (!user) {
+    return next(errorHandler(400, 'Invalid or expired OTP.'));
+  }
+  res.json({ message: 'OTP verified successfully.', email });
+};
+
+// @desc Reset Password
+// @route POST /api/v1/users/reset-password
+// @access Public
+export const resetPassword = async (req, res, next) => {
+  const { email, password, otp } = req.body;
+
+  const user = await User.findOne({ email });
+  if (!user) {
+    return next(errorHandler(400, `Sorry, we couldn't find your account.`));
+  }
+
+  // Verify OTP and expiration
+  if (
+    !user.resetPasswordToken ||
+    user.resetPasswordToken !== otp ||
+    user.resetPasswordExpires < Date.now()
+  ) {
+    return next(errorHandler(400, 'Invalid or expired OTP.'));
+  }
+
+  const hashedPassword = await hashPassword(password);
+  user.password = hashedPassword;
+  user.resetPasswordToken = undefined;
+  user.resetPasswordExpires = undefined;
+
+  // create jwt
+  const token = createJWT({ userId: user._id });
+  // create cookie
+  attachCookies({ res, token });
+
+  await user.save();
+
+  res.json({ message: 'Password has been reset successfully.' });
 };
