@@ -7,7 +7,8 @@ const CommentSchema = new mongoose.Schema(
       required: true,
     },
     postId: {
-      type: String,
+      type: mongoose.Types.ObjectId,
+      ref: 'Post',
       required: true,
     },
     userId: {

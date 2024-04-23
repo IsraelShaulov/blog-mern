@@ -2,7 +2,7 @@ import { Alert, Button, Modal, TextInput, Textarea } from 'flowbite-react';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
-// import Comment from './Comment';
+import Comment from './Comment';
 import { HiOutlineExclamationCircle } from 'react-icons/hi';
 import axios from 'axios';
 
@@ -10,6 +10,7 @@ const CommentSection = ({ postId }) => {
   const { currentUser } = useSelector((state) => state.user);
   const [comment, setComment] = useState('');
   const [commentError, setCommentError] = useState(null);
+  const [commentsArray, setCommentsArray] = useState([]);
 
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
@@ -22,13 +23,30 @@ const CommentSection = ({ postId }) => {
         postId: postId,
         userId: currentUser._id,
       });
+      const data = response.data;
       setComment('');
       setCommentError(null);
+      setCommentsArray([data, ...commentsArray]);
     } catch (error) {
       console.log(error);
       setCommentError(error.message);
     }
   };
+
+  useEffect(() => {
+    const getComments = async () => {
+      try {
+        const response = await axios.get(
+          `/api/v1/comment/get-posts-comments/${postId}`
+        );
+        const data = response.data;
+        setCommentsArray(data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getComments();
+  }, [postId]);
 
   return (
     <div className='max-w-2xl mx-auto w-full p-3'>
@@ -80,6 +98,21 @@ const CommentSection = ({ postId }) => {
             </Alert>
           )}
         </form>
+      )}
+      {commentsArray.lenth === 0 ? (
+        <p className='text-sm my-5'>No comments yet!</p>
+      ) : (
+        <>
+          <div className='text-sm my-5 flex items-center gap-2'>
+            <p>Comments</p>
+            <div className='border border-gray-400 py-1 px-2 rounded-sm'>
+              <p>{commentsArray.length}</p>
+            </div>
+          </div>
+          {commentsArray.map((comment) => {
+            return <Comment key={comment._id} comment={comment} />;
+          })}
+        </>
       )}
     </div>
   );
