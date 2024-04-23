@@ -15,10 +15,12 @@ import PostPage from './pages/PostPage';
 import ForgotPassword from './pages/ForgotPassword';
 import VerifyOTP from './pages/VerifyOTP';
 import ResetPassword from './pages/ResetPassword';
+import ScrollToTop from './components/ScrollToTop';
 
 const App = () => {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Header />
       <Routes>
         <Route index={true} path='/' element={<Home />} />
